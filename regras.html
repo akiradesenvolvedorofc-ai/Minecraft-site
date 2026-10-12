@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Regras — SweetMC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+  :root{
+    --bg:#050508;
+    --bg-soft:#0a0a10;
+    --surface:#101018;
+    --surface-2:#16161f;
+    --border:rgba(255,255,255,.07);
+    --border-strong:rgba(255,255,255,.14);
+
+    --fg:#ffffff;
+    --fg-muted:#8a8a9a;
+    --fg-dim:#55556a;
+
+    --accent:#a855f7;
+    --accent-2:#d946ef;
+    --accent-soft:rgba(168,85,247,.1);
+    --accent-glow:rgba(168,85,247,.3);
+
+    --green:#22c55e;
+    --green-soft:rgba(34,197,94,.12);
+    --amber:#f59e0b;
+    --amber-soft:rgba(245,158,11,.14);
+    --red:#ef4444;
+    --red-soft:rgba(239,68,68,.12);
+    --blue:#3b82f6;
+    --blue-soft:rgba(59,130,246,.12);
+
+    --radius:14px;
+    --radius-lg:24px;
+  }
+
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--fg);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+
+  /* Grid de fundo */
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, #000 20%, transparent 90%);
+    -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, #000 20%, transparent 90%);
+    pointer-events:none;
+    z-index:0;
+  }
+  body::after{
+    content:'';
+    position:fixed;
+    top:-400px;left:50%;
+    transform:translateX(-50%);
+    width:1000px;height:700px;
+    background:radial-gradient(circle, var(--accent-glow), transparent 65%);
+    pointer-events:none;
+    z-index:0;
+    opacity:.35;
+    filter:blur(80px);
+  }
+
+  /* ========== NAVBAR ========== */
+  nav{
+    position:sticky;
+    top:0;
+    z-index:50;
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    background:rgba(5,5,8,.75);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-inner{
+    max-width:1100px;
+    margin:0 auto;
+    padding:16px 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-decoration:none;
+    color:var(--fg);
+  }
+  .brand-logo{
+    width:40px;height:40px;
+    border-radius:12px;
+    background:#ffffff;
+    display:grid;place-items:center;
+    font-weight:900;color:#050508;
+    font-size:1.15rem;letter-spacing:-.02em;
+    box-shadow:0 0 24px rgba(255,255,255,.15);
+  }
+  .brand-text{font-weight:800;font-size:1.08rem;letter-spacing:-.02em}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:11px 20px;border-radius:100px;
+    font-size:.88rem;font-weight:600;
+    text-decoration:none;border:none;cursor:pointer;
+    font-family:inherit;transition:all .22s ease;
+    white-space:nowrap;
+  }
+  .btn svg{width:16px;height:16px}
+  .btn-primary{
+    background:#ffffff;
+    color:#050508;
+    box-shadow:0 4px 20px rgba(255,255,255,.12);
+  }
+  .btn-primary:hover{
+    transform:translateY(-1px);
+    box-shadow:0 8px 32px rgba(255,255,255,.22);
+    background:#f5f5f8;
+  }
+  .btn-ghost{
+    background:rgba(255,255,255,.05);
+    color:var(--fg);
+    border:1px solid rgba(255,255,255,.15);
+  }
+  .btn-ghost:hover{
+    background:rgba(255,255,255,.09);
+    border-color:rgba(255,255,255,.25);
+  }
+
+  .container{
+    max-width:1100px;
+    margin:0 auto;
+    padding:0 28px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* ========== HEADER ========== */
+  .page-header{
+    padding:80px 0 50px;
+    text-align:center;
+  }
+  .page-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 14px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:100px;
+    font-size:.78rem;
+    color:var(--fg-muted);
+    font-weight:500;
+    margin-bottom:22px;
+  }
+  .page-badge svg{width:14px;height:14px;color:var(--accent)}
+  .page-header h1{
+    font-size:clamp(2.4rem, 6vw, 4.2rem);
+    font-weight:900;
+    line-height:1.05;
+    letter-spacing:-.05em;
+    margin-bottom:20px;
+    color:#ffffff;
+  }
+  .page-header h1 .dim{
+    color:var(--fg-dim);
+    font-style:italic;
+    font-weight:300;
+  }
+  .page-header p{
+    color:var(--fg-muted);
+    font-size:1.08rem;
+    max-width:560px;
+    margin:0 auto;
+  }
+
+  /* Meta info (atualização, versão) */
+  .page-meta{
+    display:flex;
+    justify-content:center;
+    gap:24px;
+    flex-wrap:wrap;
+    margin-top:30px;
+    font-size:.85rem;
+    color:var(--fg-muted);
+  }
+  .page-meta span{display:inline-flex;align-items:center;gap:8px}
+  .page-meta svg{width:14px;height:14px;color:var(--fg-dim)}
+
+  /* ========== AVISO TOPO ========== */
+  .alert{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    padding:18px 22px;
+    border-radius:var(--radius);
+    background:var(--amber-soft);
+    border:1px solid rgba(245,158,11,.25);
+    margin:40px 0 20px;
+    font-size:.92rem;
+    color:#fbbf24;
+    line-height:1.6;
+  }
+  .alert svg{width:20px;height:20px;flex-shrink:0;margin-top:2px;color:#fbbf24}
+  .alert strong{color:#fcd34d;font-weight:700}
+
+  /* ========== ÍNDICE (Table of Contents) ========== */
+  .toc{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    padding:28px 32px;
+    margin:24px 0 60px;
+  }
+  .toc-title{
+    font-size:.75rem;
+    font-weight:800;
+    color:var(--fg-dim);
+    text-transform:uppercase;
+    letter-spacing:.16em;
+    margin-bottom:18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .toc-title svg{width:15px;height:15px}
+  .toc-list{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:8px;
+    list-style:none;
+  }
+  .toc-list a{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 14px;
+    border-radius:10px;
+    color:var(--fg-muted);
+    text-decoration:none;
+    font-size:.92rem;
+    font-weight:500;
+    transition:all .2s;
+    border:1px solid transparent;
+  }
+  .toc-list a:hover{
+    background:rgba(255,255,255,.04);
+    border-color:var(--border);
+    color:#ffffff;
+  }
+  .toc-list a .num{
+    font-size:.72rem;
+    font-weight:700;
+    color:var(--fg-dim);
+    font-variant-numeric:tabular-nums;
+    min-width:22px;
+  }
+
+  /* ========== SEÇÕES DE REGRAS ========== */
+  .rules-section{
+    margin-bottom:60px;
+    scroll-margin-top:100px;
+  }
+
+  .rules-header{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:24px;
+    padding-bottom:18px;
+    border-bottom:1px solid var(--border);
+  }
+  .rules-icon{
+    width:44px;height:44px;
+    border-radius:12px;
+    display:grid;place-items:center;
+    flex-shrink:0;
+    border:1px solid var(--border);
+  }
+  .rules-icon svg{width:20px;height:20px}
+
+  .rules-icon.red{background:var(--red-soft);border-color:rgba(239,68,68,.25);color:#f87171}
+  .rules-icon.amber{background:var(--amber-soft);border-color:rgba(245,158,11,.25);color:#fbbf24}
+  .rules-icon.green{background:var(--green-soft);border-color:rgba(34,197,94,.25);color:#4ade80}
+  .rules-icon.blue{background:var(--blue-soft);border-color:rgba(59,130,246,.25);color:#60a5fa}
+  .rules-icon.purple{background:var(--accent-soft);border-color:rgba(168,85,247,.25);color:#c084fc}
+
+  .rules-header h2{
+    font-size:1.4rem;
+    font-weight:800;
+    letter-spacing:-.02em;
+    color:#ffffff;
+    margin:0;
+  }
+  .rules-header .count{
+    font-size:.75rem;
+    font-weight:700;
+    color:var(--fg-dim);
+    text-transform:uppercase;
+    letter-spacing:.14em;
+    margin-left:auto;
+    padding:4px 12px;
+    border:1px solid var(--border);
+    border-radius:100px;
+  }
+
+  /* Lista de regras */
+  .rules-list{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .rule{
+    display:flex;
+    gap:16px;
+    padding:20px 24px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    transition:all .25s ease;
+    align-items:flex-start;
+  }
+  .rule:hover{
+    border-color:var(--border-strong);
+    background:var(--surface-2);
+    transform:translateX(4px);
+  }
+
+  .rule-num{
+    font-size:.85rem;
+    font-weight:800;
+    color:#ffffff;
+    font-variant-numeric:tabular-nums;
+    background:rgba(255,255,255,.06);
+    border:1px solid var(--border);
+    width:32px;height:32px;
+    border-radius:9px;
+    display:grid;place-items:center;
+    flex-shrink:0;
+    letter-spacing:-.01em;
+  }
+
+  .rule-content{flex:1;min-width:0}
+  .rule-content h3{
+    font-size:1rem;
+    font-weight:700;
+    color:#ffffff;
+    margin-bottom:6px;
+    letter-spacing:-.01em;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .rule-content p{
+    color:var(--fg-muted);
+    font-size:.92rem;
+    line-height:1.65;
+  }
+
+  /* Tag de punição */
+  .punish{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:.68rem;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:6px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    white-space:nowrap;
+  }
+  .punish svg{width:11px;height:11px}
+  .punish.ban{background:var(--red-soft);color:#f87171;border:1px solid rgba(239,68,68,.25)}
+  .punish.mute{background:var(--amber-soft);color:#fbbf24;border:1px solid rgba(245,158,11,.25)}
+  .punish.warn{background:var(--blue-soft);color:#60a5fa;border:1px solid rgba(59,130,246,.25)}
+  .punish.kick{background:var(--accent-soft);color:#c084fc;border:1px solid rgba(168,85,247,.25)}
+
+  /* ========== RODAPÉ DE AJUDA ========== */
+  .help-box{
+    background:linear-gradient(135deg, #0f0f18, #0a0a10);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    padding:56px 40px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+    margin:60px 0 80px;
+  }
+  .help-box::before{
+    content:'';
+    position:absolute;
+    top:-50%;left:50%;
+    transform:translateX(-50%);
+    width:800px;height:500px;
+    background:radial-gradient(circle, rgba(255,255,255,.08), transparent 65%);
+    pointer-events:none;
+    opacity:.6;
+    filter:blur(60px);
+  }
+  .help-box h3{
+    font-size:clamp(1.5rem, 3.5vw, 2.1rem);
+    font-weight:800;
+    letter-spacing:-.03em;
+    margin-bottom:14px;
+    position:relative;
+    color:#ffffff;
+  }
+  .help-box p{
+    color:var(--fg-muted);
+    max-width:500px;
+    margin:0 auto 30px;
+    position:relative;
+  }
+  .help-box .actions{
+    display:flex;
+    gap:14px;
+    justify-content:center;
+    flex-wrap:wrap;
+    position:relative;
+  }
+  .btn-discord{
+    background:#5865F2;
+    color:#fff;
+    box-shadow:0 4px 16px rgba(88,101,242,.3);
+  }
+  .btn-discord:hover{
+    transform:translateY(-1px);
+    box-shadow:0 8px 24px rgba(88,101,242,.45);
+  }
+
+  /* ========== FOOTER ========== */
+  footer{
+    border-top:1px solid var(--border);
+    padding:40px 0;
+    color:var(--fg-dim);
+    font-size:.85rem;
+  }
+  .footer-inner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .footer-inner a{color:var(--fg-muted);text-decoration:none;margin-left:24px;transition:color .2s}
+  .footer-inner a:hover{color:var(--fg)}
+
+  /* Reveal */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease, transform .8s cubic-bezier(.16,1,.3,1)}
+  .reveal.visible{opacity:1;transform:none}
+
+  /* MOBILE */
+  @media (max-width:720px){
+    .nav-inner{padding:14px 20px}
+    .container{padding:0 20px}
+    .page-header{padding:60px 0 40px}
+    .toc{padding:22px 20px}
+    .rule{padding:18px 18px;gap:14px}
+    .rule:hover{transform:none}
+    .rules-header h2{font-size:1.2rem}
+    .rules-header .count{display:none}
+    .help-box{padding:44px 24px}
+    .footer-inner{flex-direction:column;text-align:center}
+    .footer-inner a{margin:0 12px}
+  }
+
+  ::selection{background:#ffffff;color:#050508}
+  ::-webkit-scrollbar{width:10px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:#1a1a24;border-radius:10px;border:2px solid var(--bg)}
+  ::-webkit-scrollbar-thumb:hover{background:#2a2a38}
+</style>
+</head>
+<body>
+
+<!-- ========== NAV ========== -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="brand">
+      <div class="brand-logo">S</div>
+      <span class="brand-text">SweetMC</span>
+    </a>
+    <a href="index.html" class="btn btn-ghost">
+      <i data-lucide="arrow-left"></i> Voltar ao site
+    </a>
+  </div>
+</nav>
+
+<!-- ========== HEADER ========== -->
+<header class="page-header">
+  <div class="container">
+    <span class="page-badge">
+      <i data-lucide="scroll-text"></i> Documento oficial
+    </span>
+    <h1>
+      Regras do <span class="dim">servidor.</span>
+    </h1>
+    <p>
+      Leia com atenção. Ao entrar no SweetMC, você concorda automaticamente
+      com todas as regras abaixo. Ignorância não é desculpa.
+    </p>
+
+    <div class="page-meta">
+      <span><i data-lucide="calendar"></i> Última atualização: <strong style="color:#fff">Outubro de 2026</strong></span>
+      <span><i data-lucide="shield-check"></i> Versão <strong style="color:#fff">2.1</strong></span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Aviso -->
+  <div class="alert reveal">
+    <i data-lucide="triangle-alert"></i>
+    <div>
+      <strong>Aviso importante:</strong> as regras podem ser alteradas a qualquer momento sem aviso prévio.
+      É sua responsabilidade reler este documento periodicamente. O desconhecimento das regras não isenta
+      nenhum jogador de punição.
+    </div>
+  </div>
+
+  <!-- Índice -->
+  <div class="toc reveal">
+    <div class="toc-title">
+      <i data-lucide="list"></i> Índice
+    </div>
+    <ul class="toc-list">
+      <li><a href="#conduta"><span class="num">01</span> Conduta geral</a></li>
+      <li><a href="#chat"><span class="num">02</span> Chat e comunicação</a></li>
+      <li><a href="#gameplay"><span class="num">03</span> Gameplay</a></li>
+      <li><a href="#construcao"><span class="num">04</span> Construção e terrenos</a></li>
+      <li><a href="#pvp"><span class="num">05</span> PvP e combate</a></li>
+      <li><a href="#punicoes"><span class="num">06</span> Punições</a></li>
+    </ul>
+  </div>
+
+  <!-- ========== 01. CONDUTA GERAL ========== -->
+  <section class="rules-section reveal" id="conduta">
+    <div class="rules-header">
+      <div class="rules-icon red"><i data-lucide="users"></i></div>
+      <h2>01. Conduta geral</h2>
+      <span class="count">4 regras</span>
+    </div>
+    <ul class="rules-list">
+      <li class="rule">
+        <div class="rule-num">1</div>
+        <div class="rule-content">
+          <h3>Respeite todos os jogadores <span class="punish ban"><i data-lucide="ban"></i> Ban</span></h3>
+          <p>Não é tolerado qualquer tipo de preconceito, racismo, homofobia, xenofobia, assédio ou discurso de ódio. Isso é passível de banimento permanente e imediato, sem aviso prévio.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">2</div>
+        <div class="rule-content">
+          <h3>Não faça bullying ou perseguição <span class="punish kick"><i data-lucide="user-x"></i> Kick</span></h3>
+          <p>Perseguir, humilhar ou constranger outros jogadores de forma repetida é proibido. Casos graves resultam em banimento temporário ou permanente.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">3</div>
+        <div class="rule-content">
+          <h3>Sem divulgação de outros servidores <span class="punish mute"><i data-lucide="volume-x"></i> Mute</span></h3>
+          <p>É proibido divulgar IPs, links de Discord ou qualquer propaganda de outros servidores no chat, placas, livros ou construções.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">4</div>
+        <div class="rule-content">
+          <h3>Não personifique a equipe <span class="punish ban"><i data-lucide="ban"></i> Ban</span></h3>
+          <p>Fingir ser staff, admin, moderador ou qualquer membro da equipe é terminantemente proibido. Use sempre seu nickname real e não copie nomes da staff.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ========== 02. CHAT ========== -->
+  <section class="rules-section reveal" id="chat">
+    <div class="rules-header">
+      <div class="rules-icon blue"><i data-lucide="message-circle"></i></div>
+      <h2>02. Chat e comunicação</h2>
+      <span class="count">5 regras</span>
+    </div>
+    <ul class="rules-list">
+      <li class="rule">
+        <div class="rule-num">5</div>
+        <div class="rule-content">
+          <h3>Sem flood ou spam <span class="punish mute"><i data-lucide="volume-x"></i> Mute</span></h3>
+          <p>Evite enviar mensagens repetidas, letras maiúsculas em excesso (CAPS LOCK), ou qualquer tipo de flood. Isso atrapalha a leitura de todos.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">6</div>
+        <div class="rule-content">
+          <h3>Sem conteúdo impróprio <span class="punish ban"><i data-lucide="ban"></i> Ban</span></h3>
+          <p>É proibido compartilhar links, imagens ou mensagens com conteúdo NSFW, gore, pornografia ou qualquer material ilegal. Banimento imediato.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">7</div>
+        <div class="rule-content">
+          <h3>Português no chat público <span class="punish warn"><i data-lucide="alert-triangle"></i> Aviso</span></h3>
+          <p>O servidor é brasileiro. Use português no chat global para que todos entendam. Outros idiomas são permitidos em chats privados ou por /msg.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">8</div>
+        <div class="rule-content">
+          <h3>Não divulgue dados pessoais <span class="punish ban"><i data-lucide="ban"></i> Ban</span></h3>
+          <p>É proibido compartilhar informações pessoais suas ou de outros jogadores (nome completo, endereço, telefone, redes sociais) sem autorização.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">9</div>
+        <div class="rule-content">
+          <h3>Sem discussões tóxicas <span class="punish mute"><i data-lucide="volume-x"></i> Mute</span></h3>
+          <p>Debates acalorados sobre política, religião ou temas sensíveis não são bem-vindos no chat. Mantenha o ambiente leve e divertido.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ========== 03. GAMEPLAY ========== -->
+  <section class="rules-section reveal" id="gameplay">
+    <div class="rules-header">
+      <div class="rules-icon green"><i data-lucide="gamepad-2"></i></div>
+      <h2>03. Gameplay</h2>
+      <span class="count">5 regras</span>
+    </div>
+    <ul class="rules-list">
+      <li class="rule">
+        <div class="rule-num">10</div>
+        <div class="rule-content">
+          <h3>Sem cheats ou hacks <span class="punish ban"><i data-lucide="ban"></i> Ban</span></h3>
+          <p>Qualquer uso de clientes modificados, X-Ray, fly, kill aura, auto-clicker ou qualquer vantagem injusta resulta em banimento permanente imediato.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">11</div>
+        <div class="rule-content">
+          <h3>Sem duplicação de itens <span class="punish ban"><i data-lucide="ban"></i> Ban</span></h3>
+          <p>Explorar bugs para duplicar itens, dinheiro ou qualquer recurso é proibido. Se encontrar um bug, reporte à equipe — não abuse dele.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">12</div>
+        <div class="rule-content">
+          <h3>Não explore bugs intencionalmente <span class="punish kick"><i data-lucide="user-x"></i> Kick</span></h3>
+          <p>Usar bugs de plugins, mundo ou mecânicas para benefício próprio é punível. Reportar bugs à staff pode render recompensa.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">13</div>
+        <div class="rule-content">
+          <h3>Sem macro ou automação <span class="punish ban"><i data-lucide="ban"></i> Ban</span></h3>
+          <p>Farms AFK com macro, mineiros automáticos ou qualquer automação que gere recursos sem você estar ativo são proibidos.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">14</div>
+        <div class="rule-content">
+          <h3>Respeite a economia do servidor <span class="punish mute"><i data-lucide="volume-x"></i> Mute</span></h3>
+          <p>Não manipule preços do mercado, não crie esquemas de pirâmide, nem tente fraudar o sistema de lojas e leilão.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ========== 04. CONSTRUÇÃO ========== -->
+  <section class="rules-section reveal" id="construcao">
+    <div class="rules-header">
+      <div class="rules-icon purple"><i data-lucide="home"></i></div>
+      <h2>04. Construção e terrenos</h2>
+      <span class="count">4 regras</span>
+    </div>
+    <ul class="rules-list">
+      <li class="rule">
+        <div class="rule-num">15</div>
+        <div class="rule-content">
+          <h3>Respeite terrenos protegidos <span class="punish ban"><i data-lucide="ban"></i> Ban</span></h3>
+          <p>Não tente quebrar, modificar ou acessar terrenos de outros jogadores sem permissão. O sistema de proteção existe para garantir isso.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">16</div>
+        <div class="rule-content">
+          <h3>Construa longe de outros <span class="punish warn"><i data-lucide="alert-triangle"></i> Aviso</span></h3>
+          <p>Mantenha uma distância razoável de bases alheias. Não construa colado, não cerque bases de outros com blocos e não bloqueie passagens.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">17</div>
+        <div class="rule-content">
+          <h3>Sem construções ofensivas <span class="punish ban"><i data-lucide="ban"></i> Ban</span></h3>
+          <p>Qualquer construção com símbolos de ódio, conteúdo sexual ou que desrespeite outros jogadores será removida e o responsável punido.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">18</div>
+        <div class="rule-content">
+          <h3>Sem lag machines <span class="punish ban"><i data-lucide="ban"></i> Ban</span></h3>
+          <p>Criar máquinas ou construções propositalmente para lagar o servidor é crime grave e resulta em banimento permanente.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ========== 05. PVP ========== -->
+  <section class="rules-section reveal" id="pvp">
+    <div class="rules-header">
+      <div class="rules-icon red"><i data-lucide="swords"></i></div>
+      <h2>05. PvP e combate</h2>
+      <span class="count">3 regras</span>
+    </div>
+    <ul class="rules-list">
+      <li class="rule">
+        <div class="rule-num">19</div>
+        <div class="rule-content">
+          <h3>PvP só com consentimento <span class="punish kick"><i data-lucide="user-x"></i> Kick</span></h3>
+          <p>Mate apenas jogadores que aceitaram o combate ou que estão em zonas PvP. Matar em zonas seguras é proibido.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">20</div>
+        <div class="rule-content">
+          <h3>Sem spawn kill <span class="punish ban"><i data-lucide="ban"></i> Ban</span></h3>
+          <p>Matar jogadores repetidamente ao saírem do spawn ou em zonas seguras é considerado spawn kill e é punível com banimento.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">21</div>
+        <div class="rule-content">
+          <h3>Sem combat logging <span class="punish kick"><i data-lucide="user-x"></i> Kick</span></h3>
+          <p>Sair do servidor no meio de um combate para escapar de morrer é proibido. Existem plugins que punem automaticamente.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ========== 06. PUNIÇÕES ========== -->
+  <section class="rules-section reveal" id="punicoes">
+    <div class="rules-header">
+      <div class="rules-icon amber"><i data-lucide="gavel"></i></div>
+      <h2>06. Punições</h2>
+      <span class="count">3 itens</span>
+    </div>
+    <ul class="rules-list">
+      <li class="rule">
+        <div class="rule-num">A</div>
+        <div class="rule-content">
+          <h3>Punições progressivas</h3>
+          <p>Na maioria dos casos, as punições seguem uma ordem: <strong style="color:#fff">Aviso → Mute → Kick → Ban temporário → Ban permanente</strong>. Casos graves podem pular etapas.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">B</div>
+        <div class="rule-content">
+          <h3>Recurso e contestação</h3>
+          <p>Se você acredita que foi punido injustamente, abra um ticket no nosso Discord. Nossa equipe vai revisar o caso em até 48 horas.</p>
+        </div>
+      </li>
+      <li class="rule">
+        <div class="rule-num">C</div>
+        <div class="rule-content">
+          <h3>Decisão final da staff</h3>
+          <p>A equipe tem a palavra final sobre qualquer situação. Em casos não previstos nestas regras, o bom senso e a decisão da staff prevalecem.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ========== AJUDA ========== -->
+  <div class="help-box reveal">
+    <h3>Ficou com dúvida?</h3>
+    <p>Se algo não ficou claro ou você presenciou alguém quebrando as regras, entre em contato com a equipe.</p>
+    <div class="actions">
+      <a href="https://discord.gg/sweetmc" target="_blank" class="btn btn-discord">
+        <i data-lucide="message-circle"></i> Entrar no Discord
+      </a>
+      <a href="index.html" class="btn btn-ghost">
+        <i data-lucide="arrow-left"></i> Voltar ao site
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="container footer-inner">
+    <span>© 2026 SweetMC. Não afiliado à Mojang Studios.</span>
+    <div>
+      <a href="index.html">Início</a>
+      <a href="https://discord.gg/sweetmc" target="_blank">Discord</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  lucide.createIcons();
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 70);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: .1 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
+
+0
+
